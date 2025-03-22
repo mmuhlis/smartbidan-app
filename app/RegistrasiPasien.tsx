@@ -19,9 +19,10 @@ export default function RegistrasiPasien() {
         setFormData({ ...formData, [key]: value });
     };
 
+
     const handleRegister = async () => {
         try {
-            const response = await fetch("http://192.168.201.212:8000/api/user/register", {
+            const response = await fetch("http://192.168.198.212:8000/api/user/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

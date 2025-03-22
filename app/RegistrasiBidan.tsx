@@ -5,7 +5,6 @@ import { useRouter } from "expo-router";
 export default function RegistrasiBidan() {
     const router = useRouter();
     const [formData, setFormData] = useState({
-        name: "",
         email: "",
         password: "",
         nama_lengkap: "",

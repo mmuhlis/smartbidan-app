@@ -41,7 +41,7 @@ export default function TambahRekamMedis() {
                 return;
             }
 
-            const response = await fetch("http://192.168.217.212:8000/api/bidan/rekam-medis", {
+            const response = await fetch("http://192.168.198.212:8000/api/bidan/rekam-medis", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

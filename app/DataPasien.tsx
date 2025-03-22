@@ -12,8 +12,14 @@ export default function DataPasien() {
 
     const fetchDataPasien = async () => {
         try {
-            const token = "59|mXxNfb1f5OSzBiIQdPeGdGZfqgYX9qg8fqPm0sUk70cdc3b9"; // Sesuaikan dengan token yang valid
-            const response = await fetch("http://192.168.201.212:8000/api/user/data-pasien", {
+            // Ambil token dari AsyncStorage
+            const token = await AsyncStorage.getItem("auth_token");
+            if (!token) {
+                console.error("Token tidak ditemukan");
+                return;
+            }
+
+            const response = await fetch("http://192.168.198.212:8000/api/bidan/data-pasien", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -25,10 +31,12 @@ export default function DataPasien() {
             console.log("Response API:", json);
 
             if (json.status) {
-                setDataPasien(json.data); // Simpan data ke state
+                setDataPasien(json.data);
+            } else {
+                console.error("Gagal mengambil data pasien:", json.message);
             }
         } catch (error) {
-            console.error("Error fetching data pasien:", error);
+            console.error("Error fetching pasien:", error);
         } finally {
             setLoading(false);
         }
@@ -36,22 +44,22 @@ export default function DataPasien() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Daftar Pasien</Text>
+            <Text style={styles.header}>👩‍⚕️ Daftar Pasien</Text>
 
             {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#007bff" />
             ) : dataPasien.length === 0 ? (
-                <Text style={styles.emptyText}>Tidak ada data pasien.</Text>
+                <Text style={styles.emptyText}>⚠️ Tidak ada data pasien.</Text>
             ) : (
                 <FlatList
                     data={dataPasien}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <View style={styles.card}>
-                            <Text style={styles.title}>Nama: {item.nama_lengkap}</Text>
-                            <Text style={styles.subText}>NIK: {item.nik}</Text>
-                            <Text style={styles.subText}>Alamat: {item.alamat}</Text>
-                            <Text style={styles.subText}>No HP: {item.no_hp}</Text>
+                            <Text style={styles.title}>{item.nama_lengkap}</Text>
+                            <Text style={styles.subText}><Text style={styles.label}>NIK:</Text> {item.nik}</Text>
+                            <Text style={styles.subText}><Text style={styles.label}>Alamat:</Text> {item.alamat}</Text>
+                            <Text style={styles.subText}><Text style={styles.label}>No HP:</Text> {item.no_hp}</Text>
                         </View>
                     )}
                 />
@@ -64,36 +72,46 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#f4f6f9",
     },
     header: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
+        color: "#007bff",
         marginBottom: 16,
+        textAlign: "center",
     },
     card: {
         backgroundColor: "#fff",
         padding: 16,
-        marginBottom: 12,
-        borderRadius: 8,
+        marginVertical: 6,
+        borderRadius: 10,
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
+        borderLeftWidth: 5,
+        borderLeftColor: "#007bff",
     },
     title: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: "bold",
+        color: "#007bff",
         marginBottom: 4,
     },
     subText: {
         fontSize: 14,
-        color: "#555",
+        color: "#444",
         marginBottom: 2,
+    },
+    label: {
+        fontWeight: "bold",
+        color: "#222",
     },
     emptyText: {
         textAlign: "center",
         fontSize: 16,
         color: "#777",
+        marginTop: 20,
     },
 });

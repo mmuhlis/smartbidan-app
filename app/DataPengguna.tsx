@@ -13,8 +13,14 @@ export default function DataPengguna() {
 
     const fetchDataPengguna = async () => {
         try {
-            const token = "59|mXxNfb1f5OSzBiIQdPeGdGZfqgYX9qg8fqPm0sUk70cdc3b9"; // Sesuaikan dengan token yang valid
-            const response = await fetch("http://192.168.201.212:8000/api/user/data-pengguna", {
+            // Ambil token dari AsyncStorage
+            const token = await AsyncStorage.getItem("auth_token");
+            if (!token) {
+                console.error("Token tidak ditemukan");
+                return;
+            }
+
+            const response = await fetch("http://192.168.198.212:8000/api/bidan/data-pengguna", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -26,11 +32,13 @@ export default function DataPengguna() {
             console.log("Response API:", json);
 
             if (json.status) {
-                setAdmins(json.data.admins); // Simpan data bidan
-                setUsers(json.data.users);   // Simpan data pasien
+                setAdmins(json.data.admins || []);
+                setUsers(json.data.users || []);
+            } else {
+                console.error("Gagal mengambil data pengguna:", json.message);
             }
         } catch (error) {
-            console.error("Error fetching data pasien:", error);
+            console.error("Error fetching data pengguna:", error);
         } finally {
             setLoading(false);
         }
@@ -38,39 +46,47 @@ export default function DataPengguna() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Data Pengguna</Text>
+            <Text style={styles.header}>👥 Data Pengguna</Text>
 
             {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="#007bff" />
             ) : (
                 <>
-                    <Text style={styles.sectionHeader}>Daftar Bidan</Text>
-                    <FlatList
-                        data={admins}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <View style={styles.card}>
-                                <Text style={styles.title}>Nama: {item.nama_lengkap}</Text>
-                                <Text style={styles.subText}>Email: {item.email}</Text>
-                                <Text style={styles.subText}>No HP: {item.no_hp}</Text>
-                            </View>
-                        )}
-                    />
+                    <Text style={styles.sectionHeader}>🩺 Daftar Bidan</Text>
+                    {admins.length === 0 ? (
+                        <Text style={styles.emptyText}>⚠️ Tidak ada bidan yang terdaftar.</Text>
+                    ) : (
+                        <FlatList
+                            data={admins}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <View style={[styles.card, styles.bidanCard]}>
+                                    <Text style={styles.title}>{item.nama_lengkap}</Text>
+                                    <Text style={styles.subText}><Text style={styles.label}>Email:</Text> {item.email}</Text>
+                                    <Text style={styles.subText}><Text style={styles.label}>No HP:</Text> {item.no_hp}</Text>
+                                </View>
+                            )}
+                        />
+                    )}
 
-                    <Text style={styles.sectionHeader}>Daftar Pasien</Text>
-                    <FlatList
-                        data={users}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (
-                            <View style={styles.card}>
-                                <Text style={styles.title}>Nama: {item.nama_lengkap}</Text>
-                                <Text style={styles.subText}>Email: {item.email}</Text>
-                                <Text style={styles.subText}>NIK: {item.nik}</Text>
-                                <Text style={styles.subText}>No HP: {item.no_hp}</Text>
-                                <Text style={styles.subText}>Alamat: {item.alamat}</Text>
-                            </View>
-                        )}
-                    />
+                    <Text style={styles.sectionHeader}>🏥 Daftar Pasien</Text>
+                    {users.length === 0 ? (
+                        <Text style={styles.emptyText}>⚠️ Tidak ada pasien yang terdaftar.</Text>
+                    ) : (
+                        <FlatList
+                            data={users}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => (
+                                <View style={[styles.card, styles.pasienCard]}>
+                                    <Text style={styles.title}>{item.nama_lengkap}</Text>
+                                    <Text style={styles.subText}><Text style={styles.label}>Email:</Text> {item.email}</Text>
+                                    <Text style={styles.subText}><Text style={styles.label}>NIK:</Text> {item.nik}</Text>
+                                    <Text style={styles.subText}><Text style={styles.label}>No HP:</Text> {item.no_hp}</Text>
+                                    <Text style={styles.subText}><Text style={styles.label}>Alamat:</Text> {item.alamat}</Text>
+                                </View>
+                            )}
+                        />
+                    )}
                 </>
             )}
         </View>
@@ -81,12 +97,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: "#f8f9fa",
+        backgroundColor: "#f4f6f9",
     },
     header: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
+        color: "#007bff",
         marginBottom: 16,
+        textAlign: "center",
     },
     sectionHeader: {
         fontSize: 18,
@@ -99,20 +117,39 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         padding: 16,
         marginBottom: 12,
-        borderRadius: 8,
+        borderRadius: 10,
         shadowColor: "#000",
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
     },
+    bidanCard: {
+        borderLeftWidth: 5,
+        borderLeftColor: "#007bff",
+    },
+    pasienCard: {
+        borderLeftWidth: 5,
+        borderLeftColor: "#28a745",
+    },
     title: {
         fontSize: 16,
         fontWeight: "bold",
+        color: "#007bff",
         marginBottom: 4,
     },
     subText: {
         fontSize: 14,
-        color: "#555",
+        color: "#444",
         marginBottom: 2,
+    },
+    label: {
+        fontWeight: "bold",
+        color: "#222",
+    },
+    emptyText: {
+        textAlign: "center",
+        fontSize: 16,
+        color: "#777",
+        marginTop: 10,
     },
 });

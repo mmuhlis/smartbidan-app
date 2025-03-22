@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, FlatList, ActivityIndicator } from "react-native";
+import {
+    View, StyleSheet, Text, FlatList, ActivityIndicator, TouchableOpacity
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 export default function RekamMedisBidan() {
     const [rekamMedis, setRekamMedis] = useState([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         fetchRekamMedis();
@@ -11,20 +16,32 @@ export default function RekamMedisBidan() {
 
     const fetchRekamMedis = async () => {
         try {
-            const token = "59|mXxNfb1f5OSzBiIQdPeGdGZfqgYX9qg8fqPm0sUk70cdc3b9"; // Sesuaikan dengan token yang valid
-            const response = await fetch("http://192.168.201.212:8000/api/user/rekam-medis", {
+            const token = await AsyncStorage.getItem("auth_token");
+            if (!token) {
+                console.error("Token tidak ditemukan");
+                return;
+            }
+
+            const response = await fetch("http://192.168.198.212:8000/api/bidan/rekam-medis", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
-                    "Accept": "application/json"
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
                 }
             });
 
             const json = await response.json();
-            console.log("Response API:", json);
-
-            if (json.status) {
-                setRekamMedis(json.data); // Simpan data ke state
+            if (json.rekam_medis) {
+                const groupedData = json.rekam_medis.reduce((acc, item) => {
+                    const key = item.user ? `${item.user.nama_lengkap} | NIK: ${item.user.nik || '-'}` : "Tidak Diketahui";
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(item);
+                    return acc;
+                }, {});
+                setRekamMedis(groupedData);
+            } else {
+                console.error("Gagal mengambil data rekam medis:", json.message);
             }
         } catch (error) {
             console.error("Error fetching rekam medis:", error);
@@ -36,29 +53,37 @@ export default function RekamMedisBidan() {
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Rekam Medis Pasien</Text>
-
             {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-            ) : rekamMedis.length === 0 ? (
+                <ActivityIndicator size="large" color="#007bff" />
+            ) : Object.keys(rekamMedis).length === 0 ? (
                 <Text style={styles.emptyText}>Tidak ada rekam medis.</Text>
             ) : (
                 <FlatList
-                    data={rekamMedis}
-                    keyExtractor={(item) => item.id.toString()}
+                    data={Object.keys(rekamMedis)}
+                    keyExtractor={(item) => item}
                     renderItem={({ item }) => (
-                        <View style={styles.card}>
-                            <Text style={styles.title}>Nama: {item.user.nama_lengkap}</Text>
-                            <Text style={styles.subText}>NIK: {item.user.nik}</Text>
-                            <Text style={styles.subText}>Kategori: {item.kategori}</Text>
-                            <Text style={styles.subText}>Keluhan: {item.keluhan}</Text>
-                            <Text style={styles.subText}>Diagnosa: {item.diagnosa}</Text>
-                            <Text style={styles.subText}>Tindakan: {item.tindakan}</Text>
-                            <Text style={styles.subText}>Bidan: {item.admin.nama_lengkap}</Text>
-                            <Text style={styles.date}>Tanggal Periksa: {item.tanggal_periksa}</Text>
-                        </View>
+                        <TouchableOpacity
+                            style={styles.card}
+                            onPress={() =>
+                                router.push({
+                                    pathname: "/DetailRekamMedis",
+                                    params: { data: JSON.stringify(rekamMedis[item]), nama: item }
+                                })
+                            }
+                        >
+                            <Text style={styles.title}>{item}</Text>
+                            <Text style={styles.subText}>Total Rekam Medis: {rekamMedis[item].length}</Text>
+                        </TouchableOpacity>
                     )}
                 />
             )}
+
+            <TouchableOpacity
+                style={styles.addButton}
+                onPress={() => router.push("http://192.168.198.212:8000/admin/login")}
+            >
+                <Text style={styles.addButtonText}>+ Tambah Rekam Medis</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -70,9 +95,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#f8f9fa",
     },
     header: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: "bold",
         marginBottom: 16,
+        textAlign: "center",
+        color: "#333",
     },
     card: {
         backgroundColor: "#fff",
@@ -87,22 +114,29 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         fontWeight: "bold",
+        color: "#007bff",
         marginBottom: 4,
     },
     subText: {
         fontSize: 14,
         color: "#555",
-        marginBottom: 2,
-    },
-    date: {
-        fontSize: 12,
-        fontWeight: "bold",
-        color: "#007bff",
-        marginTop: 4,
     },
     emptyText: {
         textAlign: "center",
         fontSize: 16,
         color: "#777",
+        marginTop: 20,
+    },
+    addButton: {
+        marginTop: 20,
+        backgroundColor: "#007bff",
+        padding: 12,
+        borderRadius: 8,
+        alignItems: "center",
+    },
+    addButtonText: {
+        color: "#fff",
+        fontSize: 18,
+        fontWeight: "bold",
     },
 });

@@ -30,7 +30,7 @@ export default function DashboardPasien() {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("HasilSkriningPasien")}>
                     <Image source={require("../assets/images/skrining.png")} style={styles.cardImage} />
-                    <Text>Hasil Skrining</Text>
+                    <Text>Skrining</Text>
                 </TouchableOpacity>
             </View>
         </View>

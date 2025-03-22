@@ -4,7 +4,7 @@ import { View, StyleSheet, Text } from 'react-native';
 export default function HasilSkriningPasien() {
     return (
         <View style={styles.container}>
-            <Text>Hasil Skrining Pasien</Text>
+            <Text>Skrining Pasien</Text>
         </View>
     );
 }
