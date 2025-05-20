@@ -19,7 +19,7 @@ export default function DataPasien() {
                 return;
             }
 
-            const response = await fetch("http://192.168.198.212:8000/api/bidan/data-pasien", {
+            const response = await fetch("http://192.168.94.1:8000/api/bidan/data-pasien", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,

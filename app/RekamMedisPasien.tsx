@@ -20,7 +20,7 @@ export default function RekamMedisPasien() {
                 return;
             }
 
-            const response = await fetch("http://192.168.198.212:8000/api/user/rekam-medis", {
+            const response = await fetch("http://192.168.37.1:8000/api/user/rekam-medis", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,

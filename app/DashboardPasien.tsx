@@ -28,9 +28,15 @@ export default function DashboardPasien() {
                     <Image source={require("../assets/images/rekammedis.png")} style={styles.cardImage} />
                     <Text>Rekam Medis</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("HasilSkriningPasien")}>
+                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("MenuSkrining")}>
                     <Image source={require("../assets/images/skrining.png")} style={styles.cardImage} />
                     <Text>Skrining</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.cardContainer}>
+                <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("SkriningFormLanjutan")}>
+                    <Image source={require("../assets/images/rekammedis.png")} style={styles.cardImage} />
+                    <Text>Riwayat Skrining</Text>
                 </TouchableOpacity>
             </View>
         </View>

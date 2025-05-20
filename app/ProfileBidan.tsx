@@ -26,7 +26,7 @@ export default function ProfileBidan() {
                 return;
             }
 
-            const response = await fetch(`http://192.168.198.212:8000/api/bidan/${userId}`, {
+            const response = await fetch(`http://192.168.124.1:8000/api/bidan/${userId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -56,7 +56,7 @@ export default function ProfileBidan() {
             const token = await AsyncStorage.getItem("auth_token");
             const userId = await AsyncStorage.getItem("user_id");
 
-            const response = await fetch(`http://192.168.198.212:8000/api/bidan/${userId}`, {
+            const response = await fetch(`http://192.168.94.1:8000/api/bidan/${userId}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token}`,

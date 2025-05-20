@@ -22,7 +22,7 @@ export default function RegistrasiPasien() {
 
     const handleRegister = async () => {
         try {
-            const response = await fetch("http://192.168.198.212:8000/api/user/register", {
+            const response = await fetch("http://192.168.94.1:8000/api/user/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export default function RegistrasiPasien() {
 
                 if (response.ok) {
                     Alert.alert("Sukses", "Registrasi berhasil! Silakan login.");
-                    router.push("/");
+                    router.push("/Login");
                 } else {
                     Alert.alert("Error", result.message || "Registrasi gagal.");
                 }

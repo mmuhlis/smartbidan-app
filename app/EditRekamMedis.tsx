@@ -20,7 +20,7 @@ export default function EditRekamMedis() {
                 return;
             }
 
-            const response = await fetch(`http://192.168.217.212:8000/api/bidan/rekam-medis/${data.id}`, {
+            const response = await fetch(`http://192.168.94.1:8000/api/bidan/rekam-medis/${data.id}`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${token}`,

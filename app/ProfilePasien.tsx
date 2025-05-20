@@ -28,7 +28,7 @@ export default function ProfilePasien() {
                 return;
             }
 
-            const response = await fetch(`http://192.168.198.212:8000/api/user/${userId}`, {
+            const response = await fetch(`http://192.168.37.1:8000/api/user/${userId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -59,7 +59,7 @@ export default function ProfilePasien() {
             const token = await AsyncStorage.getItem("auth_token");
             const userId = await AsyncStorage.getItem("user_id");
 
-            const response = await fetch(`http://192.168.198.212:8000/api/user/${userId}`, {
+            const response = await fetch(`http://192.168.94.1:8000/api/user/${userId}`, {
                 method: "PUT",
                 headers: {
                     "Authorization": `Bearer ${token}`,

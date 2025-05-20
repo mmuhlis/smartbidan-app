@@ -22,7 +22,7 @@ export default function RekamMedisBidan() {
                 return;
             }
 
-            const response = await fetch("http://192.168.198.212:8000/api/bidan/rekam-medis", {
+            const response = await fetch("http://192.168.94.1:8000/api/bidan/rekam-medis", {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${token}`,
@@ -80,7 +80,7 @@ export default function RekamMedisBidan() {
 
             <TouchableOpacity
                 style={styles.addButton}
-                onPress={() => router.push("http://192.168.198.212:8000/admin/login")}
+                onPress={() => router.push("http://192.168.94.1:8000/admin/login")}
             >
                 <Text style={styles.addButtonText}>+ Tambah Rekam Medis</Text>
             </TouchableOpacity>

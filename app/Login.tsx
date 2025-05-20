@@ -31,8 +31,8 @@ export default function Login() {
             // Endpoint API berdasarkan role
             const endpoint =
                 role === "bidan"
-                    ? "http://192.168.198.212:8000/api/bidan/login"
-                    : "http://192.168.198.212:8000/api/user/login";
+                    ? "http://192.168.94.1:8000/api/bidan/login"
+                    : "http://192.168.94.1:8000/api/user/login";
 
             const response = await fetch(endpoint, {
                 method: "POST",

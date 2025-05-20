@@ -23,7 +23,7 @@ export default function RegistrasiBidan() {
         }
 
         try {
-            const response = await fetch("http://192.168.217.212:8000/api/bidan/register", {
+            const response = await fetch("http://192.168.94.1:8000/api/bidan/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
